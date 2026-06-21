@@ -1,0 +1,106 @@
+<style>
+   .sub {
+      background-color: #3F51B5;
+      color: #FFFFFF;
+   }
+</style>
+<section class="tx-container">
+   <form>
+      <table class="bordered">
+         <tr>
+            <th>加载已有参数集文件</th>
+         </tr>
+         <tr>
+            <td>
+               <input id="uploadBinaryButton" accept=".xml,.bin" type="file"/>
+               <button class="pure-material-button-contained" type="button" name="btnClearAll" id="uploadFile"
+                  onClick="handleUpload();">加载文件
+               </button>
+               <button class="pure-material-button-contained" type="button" name="btnClearAll" id="idClearAll"
+                  onClick="doClearFields();">清除字段
+               </button>
+            </td>
+         </tr>
+      </table>
+      <br>
+      <table class="bordered" id="dataParams">
+         <tr>
+            <th colspan="9">参数</th>
+         </tr>
+         <tr>
+            <td class="sub" width="40"><b>#</b></td>
+            <td class="sub" width="200"><b>Diagnostic address</b></td>
+            <td class="sub"><b>Start address</b></td>
+            <td class="sub"><b>Dataset name</b></td>
+            <td class="sub"><b>Dataset version</b></td>
+            <td class="sub"><b>Login</b></td>
+            <td class="sub"><b>Dataset type</b></td>
+            <td class="sub" width="300"><b>File name</b></td>
+            <td class="sub" width="60"></td>
+         </tr>
+         <tr>
+            <td colspan="9">
+               <button class="pure-material-button-contained" type="button" id="newParam" onclick="addNewParam()">添加 PARAMETER_DATA 行</button>
+            </td>
+         </tr>
+      </table>
+      <br>
+      <table id="compressedData" class="bordered" style="display: none">
+         <tr>
+            <th colspan="4">压缩数据</th>
+         </tr>
+         <tr>
+            <td class="sub"><b>已编码数据</b></td>
+            <td class="sub"><b>内容类型</b></td>
+            <td class="sub"><b>解码后大小</b></td>
+            <td class="sub"><b>压缩后大小</b></td>
+         </tr>
+         <tr>
+            <td><input type="checkbox" id="isCompressed" disabled></td>
+            <td><input id="content" value="0"></td>
+            <td><input id="uncompressedBytes" value="0"></td>
+            <td><input id="compressedBytes" value="0"></td>
+         </tr>
+         <tr>
+            <td colspan="4"><textarea id="data" rows="25" style="width: 100%;font-family: Courier New, Courier, monospace;"></textarea></td>
+         </tr>
+         <tr>
+             <td colspan="4">
+                 <button class="pure-material-button-contained" type="button" id="decode" onclick="doParseUncompressed()">解码数据</button>
+                 <button class="pure-material-button-contained" type="button" id="original" onclick="doOriginal()">原始值</button>
+             </td>
+         </tr>
+      </table>
+            <br>
+      <table id="parsedCompressedParams" class="bordered" style="display: none">
+         <tr>
+            <th colspan="5">参数</th>
+         </tr>
+         <tr>
+            <td class="sub" width="40"><b>#</b></td>
+            <td class="sub"><b>Start address</b></td>
+            <td class="sub"><b>Dataset name</b></td>
+            <td class="sub"><b>Dataset version</b></td>
+            <td class="sub" width="300"><b>File name</b></td>
+         </tr>
+         <tr>
+            <td colspan="5"><button class="pure-material-button-contained" type="button" id="simplify" onclick="doSimplify()">转换为 PARAMETER_DATA（实验性功能）</button></td>
+         </tr>
+      </table>
+      <div id="buttons" style="hidden: true">
+         <br>
+         <button class="pure-material-button-contained" type="button" id="generate" onclick="doGenerate()">生成 XML dataset</button>
+         <br><br>
+      </div>
+      <table id="generatedData" class="bordered" style="display: none">
+         <tr>
+            <th>生成的 XML dataset</th>
+         </tr>
+         <tr>
+            <td><textarea id="dataset" rows="15" style="width: 100%;font-family: Courier New, Courier, monospace;"></textarea></td>
+         </tr>
+      </table>
+      <script src="../../assets/js/crc.min.js"></script>
+      <script src="../../assets/js/dataset.js"></script>
+   </form>
+</section>

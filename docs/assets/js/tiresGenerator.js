@@ -1,5 +1,97 @@
 "use strict";
 
+// 本地化：按站点语言选择文本（zh/en/ru，默认 ru）。原项目为俄/英双语并列，
+// 这里拆成单语，让中文站显示中文、英文站显示英文、俄文站显示俄文。
+const tgI18n = (function () {
+    const lang = location.pathname.indexOf("/zh/") !== -1 ? "zh"
+               : location.pathname.indexOf("/en/") !== -1 ? "en" : "ru";
+    const table = {
+        tireSetIndividual: {
+            ru: "Индивидуальная настройка давления в шинах",
+            en: "Tire set Individual",
+            zh: "个性化胎压设置"
+        },
+        tireSetHeader: {
+            ru: "Настройка давления в шинах: #{0}",
+            en: "Tire set: #{0}",
+            zh: "胎压设置 #{0}"
+        },
+        fieldName: {
+            ru: "Имя",
+            en: "Name",
+            zh: "名称"
+        },
+        loadSituation: {
+            ru: "Тип загрузки машины",
+            en: "Load situation",
+            zh: "车辆负载状态"
+        },
+        frontWheels: {
+            ru: "Передние колеса",
+            en: "Front wheels",
+            zh: "前轮"
+        },
+        rearWheels: {
+            ru: "Задние колеса",
+            en: "Rear wheels",
+            zh: "后轮"
+        },
+        fullLoad: {
+            ru: "Полная загрузка",
+            en: "Full load",
+            zh: "满载"
+        },
+        standardLoad: {
+            ru: "Стандартная загрузка",
+            en: "Standard load",
+            zh: "标准载荷"
+        },
+        comfortLoad: {
+            ru: "Комфортная загрузка",
+            en: "Comfort load",
+            zh: "舒适载荷"
+        },
+        needMoreThanZero: {
+            ru: "Количество комплектов шин должно быть больше 0.",
+            en: "Number of tire sets should be greater than 0.",
+            zh: "胎压设置组数必须大于 0。"
+        },
+        nameInvalid: {
+            ru: "Имя конфигурации #{0} может содержать только латинские буквы, цифры, пробел, / и +.",
+            en: "Configuration name #{0} should have only latin letters, numbers, space, / and +.",
+            zh: "配置 #{0} 的名称只能包含拉丁字母、数字、空格、/ 和 +。"
+        },
+        loadConfigPrompt: {
+            ru: "Восстановление конфигурации\n\nПожалуйста введите код, созданный ранее в данном приложении.",
+            en: "Load configuration\n\nPlease enter configuration code, created earlier with this tool",
+            zh: "恢复设置\n\n请输入此前用本工具生成的代码。"
+        },
+        invalidConfigCode: {
+            ru: "Введён некорректный код конфигурации (не base64).",
+            en: "Invalid configuration code.",
+            zh: "输入的设置代码无效（非 base64）。"
+        },
+        versionMismatch: {
+            ru: "Введенный код конфигурации не может быть восстановлен\n\nСоздан версией: {0}\nТекущая версия: {1}",
+            en: "Configuration was created using an incompatible version of this tool and can not be restored\n\nCreated version: {0}\nCurrent version: {1}",
+            zh: "该设置代码无法恢复（由不兼容的版本生成）\n\n生成版本：{0}\n当前版本：{1}"
+        },
+        saveConfigPrompt: {
+            ru: "Сохранить настройки\n\nПожалуйста, сохраните код, приведённый ниже. Он может быть использован для восстановления настроек в любое время.",
+            en: "Save configuration\n\nPlease backup the configuration code below, it can be used to restore the current configuration at a later point in time.",
+            zh: "保存设置\n\n请妥善保存下方代码，可用于随时恢复当前设置。"
+        }
+    };
+    return {
+        t: function (key, a0, a1) {
+            let s = table[key][lang];
+            if (a0 !== undefined) s = s.split("{0}").join(a0);
+            if (a1 !== undefined) s = s.split("{1}").join(a1);
+            return s;
+        }
+    };
+})();
+
 function addToDataset(dataset, info) {
     dataset.value += info;
 }
@@ -210,7 +302,7 @@ function doGenerate() {
     if (Number.isNaN(numTireSets)) numTireSets = 0;
 
     if (numTireSets < 1) {
-        window.alert("Количество комплектов шин должно быть больше 0.\nNumber of tire sets should be greater than 0.");
+        window.alert(tgI18n.t("needMoreThanZero"));
         return;
     }
 
@@ -245,10 +337,7 @@ function doGenerate() {
             const nameValue = document.getElementById("t" + index + "name").value;
 
             if (!/^(?=.*[a-zA-Z0-9])[a-zA-Z0-9 /+]+$/.test(nameValue)) {
-                window.alert(
-                    "Имя конфигурации #" + index + " может содержать только латинские буквы, цифры, пробел, / и +.\n" +
-                    "Configuration name should have only latin letters, numbers, space, / and +."
-                );
+                window.alert(tgI18n.t("nameInvalid", index));
                 return;
             }
 
@@ -387,33 +476,33 @@ function createTireSets() {
         html += "            <tr>";
 
         if (index === 11) {
-            html += "              <th colspan=\"3\">Индивидуальная настройка давления в шинах / Tire set Individual</th>";
+            html += "              <th colspan=\"3\">" + tgI18n.t("tireSetIndividual") + "</th>";
         } else {
-            html += "              <th colspan=\"3\">Настройка давления в шинах / Tire set: #" + index + "</th>";
+            html += "              <th colspan=\"3\">" + tgI18n.t("tireSetHeader", index) + "</th>";
         }
 
         html += "            </tr>";
         html += "            <tr>";
-        html += "              <td>Имя</td>";
+        html += "              <td>" + tgI18n.t("fieldName") + "</td>";
         html += "              <td colspan=\"2\"><input id=\"t" + index + "name\" style=\"height: 25px; color: #ffff00; font-weight: bold; background-color:#4051b5; width: 100%;\"></td>";
         html += "            </tr>";
         html += "            <tr>";
-        html += "              <td class=\"sub\"><b>Тип загрузки машины / Load situation</b></td>";
-        html += "              <td class=\"sub\"><b>Передние колеса / Front wheels</b></td>";
-        html += "              <td class=\"sub\"><b>Задние колеса / Rear wheels</b></td>";
+        html += "              <td class=\"sub\"><b>" + tgI18n.t("loadSituation") + "</b></td>";
+        html += "              <td class=\"sub\"><b>" + tgI18n.t("frontWheels") + "</b></td>";
+        html += "              <td class=\"sub\"><b>" + tgI18n.t("rearWheels") + "</b></td>";
         html += "            </tr>";
         html += "            <tr>";
-        html += "              <td>Полная загрузка / Full load</td>";
+        html += "              <td>" + tgI18n.t("fullLoad") + "</td>";
         html += "              <td>" + generatePD("t" + index + "pff") + "</td>";
         html += "              <td>" + generatePD("t" + index + "prf") + "</td>";
         html += "            </tr>";
         html += "            <tr>";
-        html += "              <td>Стандартная загрузка / Standard load</td>";
+        html += "              <td>" + tgI18n.t("standardLoad") + "</td>";
         html += "              <td>" + generatePD("t" + index + "pfp") + "</td>";
         html += "              <td>" + generatePD("t" + index + "prp") + "</td>";
         html += "            </tr>";
         html += "            <tr id=\"trcomfort" + index + "\">";
-        html += "              <td>Комфортная загрузка / Comfort load</td>";
+        html += "              <td>" + tgI18n.t("comfortLoad") + "</td>";
         html += "              <td>" + generatePD("t" + index + "pfc") + "</td>";
         html += "              <td>" + generatePD("t" + index + "prc") + "</td>";
         html += "            </tr>";
@@ -444,9 +533,7 @@ const configFields = [
 
 function loadConfig() {
     const result = window.prompt(
-        "Восстановление конфигурации. Load configuration\n\n" +
-        "Пожалуйста введите код, созданный ранее в данном приложении.\n" +
-        "Please enter configuration code, created earlier with this tool",
+        tgI18n.t("loadConfigPrompt"),
         ""
     );
 
@@ -456,7 +543,7 @@ function loadConfig() {
     try {
         code = window.atob(result);
     } catch (e) {
-        window.alert("Введён некорректный код конфигурации (не base64).\nInvalid configuration code.");
+        window.alert(tgI18n.t("invalidConfigCode"));
         return;
     }
 
@@ -469,11 +556,7 @@ function loadConfig() {
 
         if (data[0] === "configVersion") {
             if (data[1] !== configVersion) {
-                window.alert(
-                    "Введенный код конфигурации не может может быть восстановлен\n" +
-                    "Configuration was created using an incompatible version of this tool and can not be restored\n\n" +
-                    "Created version: " + data[1] + "\nCurrent version: " + configVersion
-                );
+                window.alert(tgI18n.t("versionMismatch", data[1], configVersion));
                 return;
             }
         } else if (data[0].charAt(0) === "@") {
@@ -512,13 +595,11 @@ function saveConfig() {
     const encoded = window.btoa(code);
 
     window.prompt(
-        "Сохранить настройки. Save configuration\n\n" +
-        "Пожалуйста, сохраните код, приведённый ниже. Он может быть использован для восстановления настроек в любое время.\n" +
-        "Please backup the configuration code below, it can be used to restore the current configuration at a later point in time.",
+        tgI18n.t("saveConfigPrompt"),
         encoded
     );
 }
 
-window.onload = function () {
-    createTireSets();
-};
+// 兼容 Material 的 navigation.instant：瞬时导航会重新执行本脚本，但不会再次触发
+// window.onload，因此直接调用（<script> 位于 body 末尾，DOM 元素此时已就绪）。
+createTireSets();
