@@ -1,0 +1,80 @@
+<body>
+   <form>
+      <table class="bordered">
+         <tr>
+            <th>设置</th>
+            <th>
+               <button class="pure-material-button-contained" type="button" onclick="loadConfig();">加载设置</button>
+               <button class="pure-material-button-contained" type="button" onclick="saveConfig();">保存设置</button>
+            </th>
+         </tr>
+         <tr>
+            <td>参数集类型</td>
+            <td>
+               <select id="docType" size="1">
+                  <option value="vcp">VCP</option>
+                  <option value="odis">ODIS</option>
+                  <option value="binary">Binary</option>
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td>RDKS ECU</td>
+            <td>
+               <select id="ecuModel" size="1">
+                  <option ecuOffset="0x7FC000" ecuVersion="2B" ecuType="74">3AA907273D</option>
+                  <option ecuOffset="0x7E0800" ecuVersion="24" ecuType="A2">3AA907273F</option>
+                  <option ecuOffset="0x7E0800" ecuVersion="2B" ecuType="74">3AA907273H</option>
+                  <option ecuOffset="0x7E0800" ecuVersion="25" ecuType="22">5Q0907273B</option>
+                  <option ecuOffset="0x7E0800" ecuVersion="25" ecuType="22">5Q0907273D</option>
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td>胎压设置组数</td>
+            <td>
+               <select id="numTireSets" size="1" onchange="updateTireSets()">
+                  <option selected>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td>单独胎压设置</td>
+            <td>
+               <input type="checkbox" id="enableIndividual" onchange="updateTireSets()">
+            </td>
+         </tr>
+         <tr>
+            <td>舒适胎压值</td>
+            <td>
+               <input type="checkbox" id="enableComfort" onchange="updateTireSets()">
+            </td>
+         </tr>
+      </table>
+      <br>
+      <div id="tireSetList"></div>
+      <div id="buttons">
+         <button class="pure-material-button-contained" type="button" id="generate" onclick="doGenerate();">生成参数集</button>
+         <button class="pure-material-button-contained" type="button" id="generateDl" onclick="doGenerateDl();">生成并下载参数集</button>
+         <br><br>
+      </div>
+      <table class="bordered">
+         <tr>
+            <th>参数集</th>
+         </tr>
+         <tr>
+            <td><textarea id="dataset" rows="25" style="width: 100%;font-family: Courier New, Courier, monospace;"></textarea></td>
+         </tr>
+      </table>
+   </form>
+   <script src="../../assets/js/tiresGenerator.js"></script>
+</body>

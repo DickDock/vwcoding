@@ -4,6 +4,42 @@ let curSelectedByte = -1;
 let defaultByteSize = 30;
 let labelsFromFile = null;
 
+// 本地化：按站点语言选择文本（zh/en/ru，默认 ru）。
+const lcI18n = (function () {
+    const lang = location.pathname.indexOf("/zh/") !== -1 ? "zh"
+               : location.pathname.indexOf("/en/") !== -1 ? "en" : "ru";
+    const table = {
+        wrongSymbols: {
+            ru: "Кодировка содержит неверные символы. Поддерживаются только латинские буквы A-F и цифры 0-9.",
+            en: "Coding has wrong symbols. Latin characters A-F and digits 0-9 are allowed.",
+            zh: "编码包含非法字符。只支持拉丁字母 A-F 和数字 0-9。"
+        },
+        oddLength: {
+            ru: "Неверное значение. Кодировка должна содержать чётное количество символов.",
+            en: "Incorrect value. Coding should have even number of symbols.",
+            zh: "数值无效。编码应包含偶数个字符。"
+        },
+        bytesHeader: {
+            ru: "Байты",
+            en: "Bytes",
+            zh: "字节"
+        },
+        badValueFormat: {
+            ru: "{0} - неверный формат введенного значения!",
+            en: "{0} - incorrect value!",
+            zh: "{0} - 输入值的格式不正确！"
+        }
+    };
+    return {
+        t: function (key, a0, a1) {
+            let s = table[key][lang];
+            if (a0 !== undefined) s = s.split("{0}").join(a0);
+            if (a1 !== undefined) s = s.split("{1}").join(a1);
+            return s;
+        }
+    };
+})();
+
 // ========== Additional methods ==========
 
 function cleanHexValue(str) {
@@ -139,18 +175,12 @@ function checkOrig() {
             }
             return true;
         } else {
-            alert(
-                "Кодировка содержит неверные символы. Поддерживаются только латинские буквы A-F и цифры 0-9. " +
-                "Coding has wrong symbols. Latin characters A-F and digits 0-9 are allowed."
-            );
+            alert(lcI18n.t("wrongSymbols"));
             clearFields();
         }
     } else {
         if (orig.length > 0) {
-            alert(
-                "Неверное значение. Кодировка должна содержать чётное количество символов. " +
-                "Incorrect value. Coding should have even number of symbols."
-            );
+            alert(lcI18n.t("oddLength"));
         }
         clearFields();
     }
@@ -490,7 +520,7 @@ function createByteDescription(countOfBytes) {
     const lines = Math.ceil(countOfBytes / bytesPerLine);
 
     let html = "<table class=\"bordered\">";
-    html += "<tr><th colspan=\"" + colsFirstLine + "\">Байты / Bytes</th></tr>";
+    html += "<tr><th colspan=\"" + colsFirstLine + "\">" + lcI18n.t("bytesHeader") + "</th></tr>";
 
     for (let line = 0; line < lines; line++) {
         const start = line * bytesPerLine;
@@ -606,7 +636,7 @@ function wireByteEvents() {
 function setByte(ctrl, byteIndex) {
     const regexp = /^[0-9a-fA-F]*$/;
     if (!regexp.test(ctrl.value)) {
-        alert(ctrl.value + " - неверный формат введенного значения! Incorrect value!");
+        alert(lcI18n.t("badValueFormat", ctrl.value));
         ctrl.value = "00";
     } else {
         ctrl.value = ctrl.value.toUpperCase();
